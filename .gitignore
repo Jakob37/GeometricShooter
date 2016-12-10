@@ -1,0 +1,9 @@
+# Folders
+.vs/
+Temp/
+obj/
+ProjectSettings/
+Library/
+
+# Files
+*.meta

@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{E01F6F06-EC61-03CA-E9F3-8DBB6C6B765D}") = "GeometricShooter", "Assembly-CSharp.csproj", "{9379E9A7-4CDA-248C-A888-85D5B8FC9FB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9379E9A7-4CDA-248C-A888-85D5B8FC9FB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9379E9A7-4CDA-248C-A888-85D5B8FC9FB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9379E9A7-4CDA-248C-A888-85D5B8FC9FB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9379E9A7-4CDA-248C-A888-85D5B8FC9FB5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
