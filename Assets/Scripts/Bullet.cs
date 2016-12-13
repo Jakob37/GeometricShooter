@@ -3,7 +3,7 @@ using System.Collections;
 using Assets.Scripts.Behaviour.Movement;
 using Assets.Scripts;
 
-public class Bullet : ScriptGameObject {
+public class Bullet : MonoBehaviour {
 
 	void Start () {
         //movement = new StraightLine(this);
@@ -11,8 +11,5 @@ public class Bullet : ScriptGameObject {
 
     void Update() {
 
-        print("Bullet base");
-
-        base.Update();
     }
 }

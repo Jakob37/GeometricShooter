@@ -45,12 +45,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Enemy.cs" />
      <Compile Include="Assets\Scripts\Behaviour\Movement\ArrowControl.cs" />
      <Compile Include="Assets\Scripts\Behaviour\Movement\Movement.cs" />
      <Compile Include="Assets\Scripts\Behaviour\Movement\StraightLine.cs" />
      <Compile Include="Assets\Scripts\Bullet.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
-     <Compile Include="Assets\Scripts\ScriptGameObject.cs" />
      <Compile Include="Assets\ToDo\Core\ScriptsParser.cs" />
      <Compile Include="Assets\ToDo\Core\TodoData.cs" />
      <Compile Include="Assets\ToDo\Core\TodoEntry.cs" />
