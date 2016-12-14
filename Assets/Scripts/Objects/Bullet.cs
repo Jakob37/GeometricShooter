@@ -5,6 +5,8 @@ using Assets.Scripts;
 
 public class Bullet : MonoBehaviour {
 
+    public float damage = 1f;
+
 	void Start () {
         //movement = new StraightLine(this);
 	}
