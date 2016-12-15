@@ -15,14 +15,24 @@ public class Level1 : MonoBehaviour {
         spawns = new List<Spawn>();
         game_objects = GetComponent<GameObjects>();
 
-        Spawn spawn = new Spawn(enemy_prefab, 1);
+        for (var i = 0; i < 30; i++) {
+            var spawn_time = Random.Range(0, 30);
+            Spawn spawn = new Spawn(enemy_prefab, spawn_time);
+            spawns.Add(spawn);
 
-        spawns.Add(spawn);
-	}
+            print("Added spawn at time " + spawn_time);
+        }
+    }
 	
 	void Update () {
 	    foreach (Spawn spawn in spawns) {
-            spawn.MyUpdate();
+            if (spawn.IsReady) {
+                print("Instantiating");
+                GameObject spawn_object = spawn.GetSpawn();
+                Instantiate(spawn_object);
+            }
         }
+
+        // print("Current time: " + Time.time);
 	}
 }
