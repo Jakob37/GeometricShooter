@@ -20,7 +20,7 @@ public class Enemy : MonoBehaviour {
 
             Bullet bullet = other_obj.GetComponent<Bullet>();
             health.InflictDamage(bullet.damage);
-            Destroy(bullet.gameObject);
+            bullet.Explode();
         }
     }
 }

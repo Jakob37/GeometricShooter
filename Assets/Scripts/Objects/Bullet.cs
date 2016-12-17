@@ -7,11 +7,18 @@ public class Bullet : MonoBehaviour {
 
     public float damage = 1f;
 
+    public GameObject explosion;
+
 	void Start () {
-        //movement = new StraightLine(this);
+
 	}
 
     void Update() {
 
+    }
+
+    public void Explode() {
+        Instantiate(explosion, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
 }

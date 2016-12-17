@@ -19,8 +19,6 @@ public class Level1 : MonoBehaviour {
 
             Spawn spawn = new Spawn(enemy_prefab, spawn_time);
             spawns.Add(spawn);
-
-            print("Added spawn at time " + spawn_time);
         }
     }
 	

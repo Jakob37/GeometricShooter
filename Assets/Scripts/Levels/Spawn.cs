@@ -33,6 +33,7 @@ namespace Assets.Scripts.Levels {
         }
 
         public Spawn() {
+
         }
     }
 }
