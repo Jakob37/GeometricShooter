@@ -7,7 +7,6 @@ using UnityEngine;
 namespace Assets.Scripts.Levels {
     class Spawn {
 
-        // public bool IsReady { get { return !is_used; } }
         public bool IsReady { get { return Time.time > spawn_time && !is_used; } }
 
         public GameObject GetSpawn() {
@@ -30,14 +29,6 @@ namespace Assets.Scripts.Levels {
         
             this.enemy_object = enemy_object.gameObject;
             spawn_time = Time.time + time;
-
-            var range_width = 5;
-            var random_x = UnityEngine.Random.Range(-range_width / 2, range_width / 2);
-
-            spawn_position = new Vector3(random_x, 0, 0);
-
-            this.enemy_object.transform.position = spawn_position;
-
             is_used = false;
         }
 
