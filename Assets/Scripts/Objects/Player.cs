@@ -10,9 +10,10 @@ public class Player : MonoBehaviour {
     public Bullet bulletPrefab;
 
     private Movement movement;
+    private LifetimeLogic lifetime_logic;
 
     void Start() {
-
+        lifetime_logic = gameObject.GetComponent<LifetimeLogic>();
     }
 
     public void Update() {
@@ -30,10 +31,8 @@ public class Player : MonoBehaviour {
 
         GameObject other_obj = collider.gameObject;
 
-        print("Trigger check");
-
         if (other_obj.GetComponent<Enemy>()) {
-            Destroy(this.gameObject);
+            lifetime_logic.Destroy();
         }
     }
 }

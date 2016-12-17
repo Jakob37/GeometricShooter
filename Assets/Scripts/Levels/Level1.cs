@@ -8,11 +8,8 @@ public class Level1 : MonoBehaviour {
 
     private List<Spawn> spawns;
 
-    private GameObjects game_objects;
-
 	void Start () {
         spawns = new List<Spawn>();
-        game_objects = GetComponent<GameObjects>();
 
         for (var i = 0; i < 30; i++) {
             var spawn_time = Random.Range(0, 30);

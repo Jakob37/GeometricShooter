@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour {
 
+    public GameObject explosion;
+
     private Health health;
 
 	void Start () {
@@ -18,9 +20,10 @@ public class Enemy : MonoBehaviour {
 
         if (other_obj.GetComponent<Bullet>()) {
 
+            LifetimeLogic bullet_lifetime = other_obj.GetComponent<LifetimeLogic>();
             Bullet bullet = other_obj.GetComponent<Bullet>();
             health.InflictDamage(bullet.damage);
-            bullet.Explode();
+            bullet_lifetime.Destroy();
         }
     }
 }
