@@ -31,8 +31,6 @@ namespace Assets.Scripts.Levels {
             this.enemy_object = enemy_object.gameObject;
             spawn_time = Time.time + time;
 
-            Console.WriteLine("Spawn time: " + spawn_time);
-
             var range_width = 5;
             var random_x = UnityEngine.Random.Range(-range_width / 2, range_width / 2);
 

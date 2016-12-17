@@ -32,7 +32,5 @@ public class Level1 : MonoBehaviour {
                 Instantiate(spawn_object);
             }
         }
-
-        // print("Current time: " + Time.time);
 	}
 }
