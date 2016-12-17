@@ -7,25 +7,23 @@ public class Player : MonoBehaviour {
 
     public float speed = 0.1f;
 
-    public Bullet bulletPrefab;
+    private BeamWeapon beam_weapon;
 
     private Movement movement;
     private LifetimeLogic lifetime_logic;
 
     void Start() {
         lifetime_logic = gameObject.GetComponent<LifetimeLogic>();
+
+        beam_weapon = gameObject.GetComponentInChildren<BeamWeapon>();
     }
 
     public void Update() {
 
         if (Input.GetKeyDown(KeyCode.Space)) {
-            ShootBullet();
+            beam_weapon.ShootBullet();
         }
 	}
-
-    private void ShootBullet() {
-        Bullet bullet = (Bullet)Instantiate(bulletPrefab, transform.position, transform.rotation);
-    }
 
     void OnTriggerEnter2D(Collider2D collider) {
 
