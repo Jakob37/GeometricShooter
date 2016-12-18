@@ -7,6 +7,8 @@ public class Player : MonoBehaviour {
 
     public float speed = 0.1f;
 
+    public Vector3 Position { get { return gameObject.transform.position; } }
+
     private BeamWeapon beam_weapon;
 
     private Movement movement;

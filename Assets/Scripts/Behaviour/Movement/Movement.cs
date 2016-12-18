@@ -8,11 +8,12 @@ namespace Assets.Scripts.Behaviour.Movement {
     public abstract class Movement : MonoBehaviour {
 
         protected Vector2 direction;
-        protected float new_speed;
+        protected float speed;
 
         public virtual void Update() {
 
-            var new_pos = transform.position + new Vector3(new_speed * direction.x, new_speed * direction.y, 0);
+            var delta_pos = new Vector3(speed * direction.x, speed * direction.y, 0);
+            var new_pos = transform.position + delta_pos;
             transform.position = new_pos;
 
             DestroyOutside();

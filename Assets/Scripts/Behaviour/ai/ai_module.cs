@@ -10,6 +10,7 @@ public class ai_module : Movement {
     }
 
     public float CLOSE_THRESHOLD = 2f;
+    public float SPEED = 0.1f;
 
     private ai_state current_state;
     private Player target_player;
@@ -20,7 +21,7 @@ public class ai_module : Movement {
         target_player = GameObject.FindObjectOfType<Player>();
 	}
 	
-	void Update () {
+	public override void Update () {
 
         var new_state = GetRelevantAIState();
 
@@ -39,14 +40,22 @@ public class ai_module : Movement {
             default:
                 break;
         }
+
+        base.Update();
 	}
 
     private void StateMovementRest() {
-        
+        this.speed = 0f;
     }
 
     private void StateMovementFollow() {
-        
+
+        Vector3 my_position = gameObject.transform.position;
+        Vector3 delta_vector = target_player.Position - my_position;
+        Vector3 new_direction = delta_vector.normalized;
+
+        this.direction = new_direction;
+        this.speed = SPEED;
     }
 
     private ai_state GetRelevantAIState() {
