@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Level1 : MonoBehaviour {
 
     public GameObject enemy_prefab;
+    public bool is_active = true;
 
     private List<Spawn> spawns;
 
@@ -20,6 +21,11 @@ public class Level1 : MonoBehaviour {
     }
 	
 	void Update () {
+
+        if (!is_active) {
+            return;
+        }
+
 	    foreach (Spawn spawn in spawns) {
             if (spawn.IsReady) {
                 CreateSpawn(spawn);

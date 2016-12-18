@@ -7,10 +7,12 @@ using UnityEngine;
 namespace Assets.Scripts.Behaviour.Movement {
     public abstract class Movement : MonoBehaviour {
 
-        protected Vector2 speed;
+        protected Vector2 direction;
+        protected float new_speed;
 
         public virtual void Update() {
-            var new_pos = transform.position + new Vector3(speed.x, speed.y, 0);
+
+            var new_pos = transform.position + new Vector3(new_speed * direction.x, new_speed * direction.y, 0);
             transform.position = new_pos;
 
             DestroyOutside();

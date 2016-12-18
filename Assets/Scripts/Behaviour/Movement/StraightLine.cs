@@ -11,7 +11,8 @@ namespace Assets.Scripts.Behaviour.Movement {
 
         public override void Update() {
 
-            speed.y = max_speed;
+            this.new_speed = max_speed;
+            this.direction = new Vector2(0, 1);
 
             base.Update();
         }
