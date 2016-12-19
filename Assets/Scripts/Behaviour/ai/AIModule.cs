@@ -2,13 +2,14 @@
 using System.Collections;
 using Assets.Scripts.Behaviour.Movement;
 
-public class ai_module : Movement {
+public enum AIState {
+    rest,
+    follow,
+    fire
+}
 
-    public enum AIState {
-        rest,
-        follow,
-        fire
-    }
+public class AIModule : Movement {
+
 
     public float CLOSE_THRESHOLD = 2f;
     public float SPEED = 0.1f;
@@ -16,6 +17,8 @@ public class ai_module : Movement {
     public float point_reach_dist = 0.5f;
 
     private AIState current_state;
+    public AIState CurrentAIState { get { return current_state; } }
+
     private Player target_player;
 
     public Vector3 GetTargetPos() {

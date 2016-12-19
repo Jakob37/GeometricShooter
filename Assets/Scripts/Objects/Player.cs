@@ -13,11 +13,12 @@ public class Player : MonoBehaviour {
 
     private Movement movement;
     private LifetimeLogic lifetime_logic;
+    private Health health;
 
     void Start() {
         lifetime_logic = gameObject.GetComponent<LifetimeLogic>();
-
         beam_weapon = gameObject.GetComponentInChildren<BeamWeapon>();
+        health = gameObject.GetComponent<Health>();
     }
 
     public void Update() {
@@ -30,8 +31,15 @@ public class Player : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D collider) {
 
         GameObject other_obj = collider.gameObject;
+        Bullet bullet = other_obj.GetComponent<Bullet>();
 
-        if (other_obj.GetComponent<Enemy>()) {
+        if (bullet && !bullet.is_friendly) {
+            LifetimeLogic bullet_lifetime = other_obj.GetComponent<LifetimeLogic>();
+
+            health.InflictDamage(bullet.damage);
+            bullet_lifetime.Destroy();
+        }
+        else if (other_obj.GetComponent<Enemy>()) {
             lifetime_logic.Destroy();
         }
     }
