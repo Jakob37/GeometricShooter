@@ -4,19 +4,38 @@ using Assets.Scripts.Behaviour.Movement;
 
 public class ai_module : Movement {
 
-    public enum ai_state {
+    public enum AIState {
         rest,
-        follow
+        follow,
+        fire
     }
 
     public float CLOSE_THRESHOLD = 2f;
     public float SPEED = 0.1f;
+    public float y_shoot_offset = 2f;
+    public float point_reach_dist = 0.5f;
 
-    private ai_state current_state;
+    private AIState current_state;
     private Player target_player;
 
+    public Vector3 GetTargetPos() {
+        return target_player.transform.position + new Vector3(0, y_shoot_offset, 0);
+    }
+
+    public float DistanceToTarget() {
+        return Vector3.Distance(transform.position, GetTargetPos());
+    }
+
+    public bool IsCloseToTarget() {
+        return DistanceToTarget() < CLOSE_THRESHOLD;
+    }
+
+    public bool IsAtFirePoint() {
+        return DistanceToTarget() < point_reach_dist;
+    }
+
 	void Start () {
-        this.current_state = ai_state.rest;
+        this.current_state = AIState.rest;
 
         target_player = GameObject.FindObjectOfType<Player>();
 	}
@@ -31,10 +50,10 @@ public class ai_module : Movement {
         }
 
         switch (current_state) {
-            case ai_state.rest:
+            case AIState.rest:
                 StateMovementRest();
                 break;
-            case ai_state.follow:
+            case AIState.follow:
                 StateMovementFollow();
                 break;
             default:
@@ -50,26 +69,50 @@ public class ai_module : Movement {
 
     private void StateMovementFollow() {
 
-        Vector3 my_position = gameObject.transform.position;
-        Vector3 delta_vector = target_player.Position - my_position;
+        Vector3 my_pos = gameObject.transform.position;
+        Vector3 player_pos = target_player.Position;
+        Vector3 offset = new Vector3(0, y_shoot_offset, 0);
+
+        print(offset);
+
+        Vector3 delta_vector = player_pos + offset - my_pos;
         Vector3 new_direction = delta_vector.normalized;
 
         this.direction = new_direction;
         this.speed = SPEED;
     }
 
-    private ai_state GetRelevantAIState() {
+    private AIState GetRelevantAIState() {
 
         Vector3 player_pos = target_player.gameObject.transform.position;
         Vector3 my_pos = gameObject.transform.position;
 
         var current_distance = Vector3.Distance(my_pos, player_pos);
 
-        if (current_distance < CLOSE_THRESHOLD) {
-            return ai_state.follow;
+        if (current_state == AIState.rest) {
+            if (IsCloseToTarget()) {
+                return AIState.follow;
+            }
+            return AIState.rest;
+        }
+        else if (current_state == AIState.follow) {
+            if (!IsCloseToTarget()) {
+                return AIState.rest;
+            }
+            else if (IsAtFirePoint()) {
+                print("Fire!");
+                return AIState.fire;
+            }
+            return AIState.follow;
+        }
+        else if (current_state == AIState.fire) {
+            if (!IsAtFirePoint()) {
+                return AIState.follow;
+            }
+            return AIState.fire;
         }
         else {
-            return ai_state.rest;
+            throw new System.Exception("Invalid AI state reached: " + current_state);
         }
     }
 }
