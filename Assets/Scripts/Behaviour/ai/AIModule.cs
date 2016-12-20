@@ -13,8 +13,12 @@ public class AIModule : Movement {
 
     public float CLOSE_THRESHOLD = 2f;
     public float SPEED = 0.1f;
+    public float braking_speed = 0.001f;
+    public float accelerate_speed = 0.001f;
+
     public float y_shoot_offset = 2f;
     public float point_reach_dist = 0.5f;
+    public float point_leave_dist = 1f;
 
     private AIState current_state;
     public AIState CurrentAIState { get { return current_state; } }
@@ -33,11 +37,15 @@ public class AIModule : Movement {
         return DistanceToTarget() < CLOSE_THRESHOLD;
     }
 
-    public bool IsAtFirePoint() {
+    public bool IsFirePointReached() {
         return DistanceToTarget() < point_reach_dist;
     }
 
-	void Start () {
+    public bool IsLeaveFirePointReached() {
+        return DistanceToTarget() > point_leave_dist;
+    }
+
+    void Start () {
         this.current_state = AIState.rest;
 
         target_player = GameObject.FindObjectOfType<Player>();
@@ -59,6 +67,9 @@ public class AIModule : Movement {
             case AIState.follow:
                 StateMovementFollow();
                 break;
+            case AIState.fire:
+                StateMovementFire();
+                break;
             default:
                 break;
         }
@@ -67,7 +78,13 @@ public class AIModule : Movement {
 	}
 
     private void StateMovementRest() {
-        this.speed = 0f;
+
+        if (this.speed < braking_speed) {
+            this.speed = 0;
+        }
+        else {
+            this.speed -= braking_speed;
+        }
     }
 
     private void StateMovementFollow() {
@@ -76,13 +93,30 @@ public class AIModule : Movement {
         Vector3 player_pos = target_player.Position;
         Vector3 offset = new Vector3(0, y_shoot_offset, 0);
 
-        print(offset);
-
         Vector3 delta_vector = player_pos + offset - my_pos;
         Vector3 new_direction = delta_vector.normalized;
 
         this.direction = new_direction;
-        this.speed = SPEED;
+
+        if (this.speed + accelerate_speed > SPEED) {
+            this.speed = SPEED;
+        }
+        else {
+            this.speed += accelerate_speed;
+        }
+    }
+
+    private void StateMovementFire() {
+
+        print("In fire mode");
+
+        if (this.speed < braking_speed) {
+            print("Speed set to zero");
+            this.speed = 0;
+        }
+        else {
+            this.speed -= braking_speed;
+        }
     }
 
     private AIState GetRelevantAIState() {
@@ -102,14 +136,13 @@ public class AIModule : Movement {
             if (!IsCloseToTarget()) {
                 return AIState.rest;
             }
-            else if (IsAtFirePoint()) {
-                print("Fire!");
+            else if (IsFirePointReached()) {
                 return AIState.fire;
             }
             return AIState.follow;
         }
         else if (current_state == AIState.fire) {
-            if (!IsAtFirePoint()) {
+            if (IsLeaveFirePointReached()) {
                 return AIState.follow;
             }
             return AIState.fire;
