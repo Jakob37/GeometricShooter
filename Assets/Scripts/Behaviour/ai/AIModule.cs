@@ -124,8 +124,6 @@ public class AIModule : Movement {
         Vector3 player_pos = target_player.gameObject.transform.position;
         Vector3 my_pos = gameObject.transform.position;
 
-        var current_distance = Vector3.Distance(my_pos, player_pos);
-
         if (current_state == AIState.rest) {
             if (IsCloseToTarget()) {
                 return AIState.follow;

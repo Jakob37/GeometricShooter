@@ -15,18 +15,32 @@ public class Player : MonoBehaviour {
     private LifetimeLogic lifetime_logic;
     private Health health;
 
+    private float current_weapon_charge;
+    private float fire_charge_time;
+
     void Start() {
         lifetime_logic = gameObject.GetComponent<LifetimeLogic>();
         beam_weapon = gameObject.GetComponentInChildren<BeamWeapon>();
         health = gameObject.GetComponent<Health>();
+
+        current_weapon_charge = 0;
+        fire_charge_time = 0.5f;
     }
 
     public void Update() {
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            beam_weapon.ShootBullet();
+        if (Input.GetKey(KeyCode.Space)) {
+            current_weapon_charge += Time.deltaTime;
         }
-	}
+        else {
+            current_weapon_charge = 0;
+        }
+
+        if (current_weapon_charge > fire_charge_time) {
+            beam_weapon.ShootBullet();
+            current_weapon_charge = 0;
+        }
+    }
 
     void OnTriggerEnter2D(Collider2D collider) {
 
