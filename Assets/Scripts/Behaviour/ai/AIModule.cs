@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Assets.Scripts.Behaviour.Movement;
+using Assets.Scripts.Behaviour.ai;
 
 public enum AIState {
     rest,
@@ -11,11 +12,11 @@ public enum AIState {
 public class AIModule : Movement {
 
 
-    public float CLOSE_THRESHOLD = 2f;
     public float SPEED = 0.1f;
     public float braking_speed = 0.001f;
     public float accelerate_speed = 0.001f;
 
+    public float close_threshold = 3f;
     public float y_shoot_offset = 2f;
     public float point_reach_dist = 0.5f;
     public float point_leave_dist = 1f;
@@ -23,32 +24,17 @@ public class AIModule : Movement {
     private AIState current_state;
     public AIState CurrentAIState { get { return current_state; } }
 
-    private Player target_player;
-
-    public Vector3 GetTargetPos() {
-        return target_player.transform.position + new Vector3(0, y_shoot_offset, 0);
-    }
-
-    public float DistanceToTarget() {
-        return Vector3.Distance(transform.position, GetTargetPos());
-    }
-
-    public bool IsCloseToTarget() {
-        return DistanceToTarget() < CLOSE_THRESHOLD;
-    }
-
-    public bool IsFirePointReached() {
-        return DistanceToTarget() < point_reach_dist;
-    }
-
-    public bool IsLeaveFirePointReached() {
-        return DistanceToTarget() > point_leave_dist;
-    }
+    private AITarget target;
 
     void Start () {
         this.current_state = AIState.rest;
 
-        target_player = GameObject.FindObjectOfType<Player>();
+        Player player = GameObject.FindObjectOfType<Player>();
+        target = new AITarget(gameObject, player.gameObject, 
+            close_threshold:close_threshold,
+            y_shoot_offset:y_shoot_offset,
+            point_reach_dist:point_reach_dist,
+            point_leave_dist:point_leave_dist);
 	}
 	
 	public override void Update () {
@@ -56,18 +42,20 @@ public class AIModule : Movement {
         var new_state = GetRelevantAIState();
 
         if (new_state != current_state) {
-            print("Switching state to: " + new_state);
             current_state = new_state;
         }
 
         switch (current_state) {
             case AIState.rest:
+                print("rest call");
                 StateMovementRest();
                 break;
             case AIState.follow:
+                print("movement call");
                 StateMovementFollow();
                 break;
             case AIState.fire:
+                print("fire call");
                 StateMovementFire();
                 break;
             default:
@@ -89,12 +77,7 @@ public class AIModule : Movement {
 
     private void StateMovementFollow() {
 
-        Vector3 my_pos = gameObject.transform.position;
-        Vector3 player_pos = target_player.Position;
-        Vector3 offset = new Vector3(0, y_shoot_offset, 0);
-
-        Vector3 delta_vector = player_pos + offset - my_pos;
-        Vector3 new_direction = delta_vector.normalized;
+        Vector3 new_direction = target.Delta.normalized;
 
         this.direction = new_direction;
 
@@ -121,26 +104,26 @@ public class AIModule : Movement {
 
     private AIState GetRelevantAIState() {
 
-        Vector3 player_pos = target_player.gameObject.transform.position;
+        Vector3 player_pos = target.GetTargetPos();
         Vector3 my_pos = gameObject.transform.position;
 
         if (current_state == AIState.rest) {
-            if (IsCloseToTarget()) {
+            if (target.IsCloseToTarget()) {
                 return AIState.follow;
             }
             return AIState.rest;
         }
         else if (current_state == AIState.follow) {
-            if (!IsCloseToTarget()) {
+            if (!target.IsCloseToTarget()) {
                 return AIState.rest;
             }
-            else if (IsFirePointReached()) {
+            else if (target.IsFirePointReached()) {
                 return AIState.fire;
             }
             return AIState.follow;
         }
         else if (current_state == AIState.fire) {
-            if (IsLeaveFirePointReached()) {
+            if (target.IsLeaveFirePointReached()) {
                 return AIState.follow;
             }
             return AIState.fire;
