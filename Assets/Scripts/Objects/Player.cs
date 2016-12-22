@@ -6,6 +6,7 @@ using Assets.Scripts;
 public class Player : MonoBehaviour {
 
     public float speed = 0.1f;
+    public float fire_charge_time = 0.2f;
 
     public Vector3 Position { get { return gameObject.transform.position; } }
 
@@ -16,7 +17,6 @@ public class Player : MonoBehaviour {
     private Health health;
 
     private float current_weapon_charge;
-    private float fire_charge_time;
 
     void Start() {
         lifetime_logic = gameObject.GetComponent<LifetimeLogic>();
@@ -24,7 +24,6 @@ public class Player : MonoBehaviour {
         health = gameObject.GetComponent<Health>();
 
         current_weapon_charge = 0;
-        fire_charge_time = 0.5f;
     }
 
     public void Update() {
