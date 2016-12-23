@@ -53,5 +53,26 @@ namespace Assets.Scripts.Behaviour.ai {
             return DistanceToTarget() > point_leave_dist;
         }
 
+        public Enemy ClosestEnemy(Enemy[] objs) {
+
+            float closest_dist = float.MaxValue;
+            Enemy closest_enemy = null;
+
+            foreach (Enemy enemy in objs) {
+
+                var obj = enemy.gameObject;
+
+                var dist_to_obj = Vector3.Distance(AiPos, obj.transform.position);
+                if (dist_to_obj < closest_dist && dist_to_obj > 0) {
+                    closest_dist = dist_to_obj;
+                    closest_enemy = enemy;
+                }
+            }
+            return closest_enemy;
+        }
+
+        public float DistToObj(GameObject obj) {
+            return Vector3.Distance(this.ai_obj.transform.position, obj.transform.position);
+        }
     }
 }

@@ -2,11 +2,17 @@
 using System.Collections;
 using Assets.Scripts.Behaviour.Movement;
 using Assets.Scripts.Behaviour.ai;
+using System.Collections.Generic;
 
 public enum AIState {
     rest,
     follow,
     fire
+}
+
+public enum AIRepelState {
+    active,
+    inactive
 }
 
 public class AIModule : Movement {
@@ -21,16 +27,22 @@ public class AIModule : Movement {
     public float point_reach_dist = 0.5f;
     public float point_leave_dist = 1f;
 
+    public float repel_distance = 1f;
+
     private AIState current_state;
     public AIState CurrentAIState { get { return current_state; } }
 
-    private AITarget target;
+    private AIRepelState current_ai_repel_state;
+    public AIRepelState CurrentAIRepelState { get { return current_ai_repel_state; } }
+
+    private AITarget ai_object;
+    private Enemy closest_enemy;
 
     void Start () {
         this.current_state = AIState.rest;
 
         Player player = GameObject.FindObjectOfType<Player>();
-        target = new AITarget(gameObject, player.gameObject, 
+        ai_object = new AITarget(gameObject, player.gameObject, 
             close_threshold:close_threshold,
             y_shoot_offset:y_shoot_offset,
             point_reach_dist:point_reach_dist,
@@ -47,23 +59,55 @@ public class AIModule : Movement {
 
         switch (current_state) {
             case AIState.rest:
-                print("rest call");
+                // print("rest call");
                 StateMovementRest();
                 break;
             case AIState.follow:
-                print("movement call");
+                // print("movement call");
                 StateMovementFollow();
                 break;
             case AIState.fire:
-                print("fire call");
+                // print("fire call");
                 StateMovementFire();
                 break;
             default:
                 break;
         }
 
+        UpdateCloseRepel();
+
+        if (current_ai_repel_state == AIRepelState.active) {
+            Repel();
+        }
+
         base.Update();
 	}
+
+    private void UpdateCloseRepel() {
+        Enemy[] other_enemy_ships = GameObject.FindObjectsOfType<Enemy>();
+
+        closest_enemy = ai_object.ClosestEnemy(other_enemy_ships);
+
+
+        float closest_enemy_dist = Vector3.Distance(gameObject.transform.position, closest_enemy.gameObject.transform.position);
+
+        print(closest_enemy_dist);
+
+        if (closest_enemy != null && closest_enemy_dist < repel_distance) {
+            current_ai_repel_state = AIRepelState.active;
+            print("Repelling!");
+        }
+        else {
+            current_ai_repel_state = AIRepelState.inactive;
+        }
+    }
+
+    private void Repel() {
+        print("Repel called!");
+        Vector3 repel_direction = -(ai_object.AiPos - closest_enemy.transform.position);
+        Vector3 repel_dir = repel_direction.normalized;
+        this.direction = repel_dir;
+    }
 
     private void StateMovementRest() {
 
@@ -77,7 +121,7 @@ public class AIModule : Movement {
 
     private void StateMovementFollow() {
 
-        Vector3 new_direction = target.Delta.normalized;
+        Vector3 new_direction = ai_object.Delta.normalized;
 
         this.direction = new_direction;
 
@@ -91,10 +135,7 @@ public class AIModule : Movement {
 
     private void StateMovementFire() {
 
-        print("In fire mode");
-
         if (this.speed < braking_speed) {
-            print("Speed set to zero");
             this.speed = 0;
         }
         else {
@@ -104,26 +145,26 @@ public class AIModule : Movement {
 
     private AIState GetRelevantAIState() {
 
-        Vector3 player_pos = target.GetTargetPos();
+        Vector3 player_pos = ai_object.GetTargetPos();
         Vector3 my_pos = gameObject.transform.position;
 
         if (current_state == AIState.rest) {
-            if (target.IsCloseToTarget()) {
+            if (ai_object.IsCloseToTarget()) {
                 return AIState.follow;
             }
             return AIState.rest;
         }
         else if (current_state == AIState.follow) {
-            if (!target.IsCloseToTarget()) {
+            if (!ai_object.IsCloseToTarget()) {
                 return AIState.rest;
             }
-            else if (target.IsFirePointReached()) {
+            else if (ai_object.IsFirePointReached()) {
                 return AIState.fire;
             }
             return AIState.follow;
         }
         else if (current_state == AIState.fire) {
-            if (target.IsLeaveFirePointReached()) {
+            if (ai_object.IsLeaveFirePointReached()) {
                 return AIState.follow;
             }
             return AIState.fire;
