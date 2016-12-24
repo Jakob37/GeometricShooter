@@ -32,6 +32,7 @@ namespace Assets.Scripts.Behaviour.ai {
         public Vector3 TargetPos { get { return this.target_obj.transform.position; } }
         public Vector3 Offset { get { return new Vector3(0, y_shoot_offset, 0); } }
         public Vector3 Delta { get { return TargetPos + Offset - AiPos; } }
+        public bool TargetAlive { get { return target_obj != null; } }
 
         public Vector3 GetTargetPos() {
             return target_obj.transform.position + new Vector3(0, y_shoot_offset, 0);

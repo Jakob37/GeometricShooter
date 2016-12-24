@@ -3,6 +3,8 @@ using System.Collections;
 using Assets.Scripts.Behaviour.Movement;
 using Assets.Scripts.Behaviour.ai;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using System;
 
 public enum AIState {
     rest,
@@ -17,8 +19,7 @@ public enum AIRepelState {
 
 public class AIModule : Movement {
 
-
-    public float SPEED = 0.1f;
+    public float max_speed = 0.1f;
     public float braking_speed = 0.001f;
     public float accelerate_speed = 0.001f;
 
@@ -28,6 +29,8 @@ public class AIModule : Movement {
     public float point_leave_dist = 1f;
 
     public float repel_distance = 1f;
+
+    public Text hud_text;
 
     private AIState current_state;
     public AIState CurrentAIState { get { return current_state; } }
@@ -52,11 +55,16 @@ public class AIModule : Movement {
 	public override void Update () {
 
         var new_state = GetRelevantAIState();
-
+        
         if (new_state != current_state) {
             current_state = new_state;
         }
 
+        if (hud_text) {
+            string hud_string = String.Format("State: {0}\nRepel: {1}", current_state, current_ai_repel_state);
+            hud_text.text = hud_string;
+        }
+        
         switch (current_state) {
             case AIState.rest:
                 // print("rest call");
@@ -73,12 +81,14 @@ public class AIModule : Movement {
             default:
                 break;
         }
-
+        
         UpdateCloseRepel();
-
+        
         if (current_ai_repel_state == AIRepelState.active) {
             Repel();
         }
+
+        this.speed = max_speed;
 
         base.Update();
 	}
@@ -87,15 +97,14 @@ public class AIModule : Movement {
         Enemy[] other_enemy_ships = GameObject.FindObjectsOfType<Enemy>();
 
         closest_enemy = ai_object.ClosestEnemy(other_enemy_ships);
+        float closest_enemy_dist = float.MaxValue;
 
-
-        float closest_enemy_dist = Vector3.Distance(gameObject.transform.position, closest_enemy.gameObject.transform.position);
-
-        print(closest_enemy_dist);
+        if (closest_enemy != null) {
+            closest_enemy_dist = Vector3.Distance(gameObject.transform.position, closest_enemy.gameObject.transform.position);
+        }
 
         if (closest_enemy != null && closest_enemy_dist < repel_distance) {
             current_ai_repel_state = AIRepelState.active;
-            print("Repelling!");
         }
         else {
             current_ai_repel_state = AIRepelState.inactive;
@@ -103,8 +112,8 @@ public class AIModule : Movement {
     }
 
     private void Repel() {
-        print("Repel called!");
-        Vector3 repel_direction = -(ai_object.AiPos - closest_enemy.transform.position);
+
+        Vector3 repel_direction = ai_object.AiPos - closest_enemy.transform.position;
         Vector3 repel_dir = repel_direction.normalized;
         this.direction = repel_dir;
     }
@@ -125,8 +134,8 @@ public class AIModule : Movement {
 
         this.direction = new_direction;
 
-        if (this.speed + accelerate_speed > SPEED) {
-            this.speed = SPEED;
+        if (this.speed + accelerate_speed > max_speed) {
+            this.speed = max_speed;
         }
         else {
             this.speed += accelerate_speed;
@@ -144,6 +153,10 @@ public class AIModule : Movement {
     }
 
     private AIState GetRelevantAIState() {
+
+        if (!ai_object.TargetAlive) {
+            return AIState.rest;
+        }
 
         Vector3 player_pos = ai_object.GetTargetPos();
         Vector3 my_pos = gameObject.transform.position;
